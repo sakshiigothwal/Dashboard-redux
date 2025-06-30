@@ -33,6 +33,8 @@ const RegisterForm = () => {
     confirmPassword: '',
   });
 
+  const [success, setSuccess] = useState('');
+
   // handle input change and clear related error message
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -123,9 +125,10 @@ const RegisterForm = () => {
         email: data.email,
         password: data.password,
       };
-
       dispatch(registerUser(newUser));
-      navigate('/login');
+      setSuccess('Registered successful!');
+      setTimeout(()=>navigate('/login'), 1500);
+
     }
   };
 
@@ -187,6 +190,7 @@ const RegisterForm = () => {
           type="button"
           onClick={handleGoogleSignIn}
         />
+        {success && <p className="success">{success}</p>}
       </div>
     </div>
   );

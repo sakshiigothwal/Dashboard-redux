@@ -32,6 +32,7 @@ function App() {
     <div className="App">
       <Router>
         <Header />
+        <div className='main'>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LogInPage />} />
@@ -62,6 +63,7 @@ function App() {
             element={isLoggedIn ? <EditUser /> : <LogInPage />}
           />
         </Routes>
+        </div>
         <Footer />
       </Router>
     </div>

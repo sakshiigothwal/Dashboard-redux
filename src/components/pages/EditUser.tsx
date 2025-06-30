@@ -1,42 +1,56 @@
-import axios from 'axios';
-import React, { useRef, useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import React, { useRef, useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { useLocation, useNavigate } from "react-router-dom";
 
-
-import Sidebar from '../molecules/Sidebar';
+import Spinnersvg from '../../images/spinner.svg';
+import { updateUser } from "../../redux/slice/userSlice";
+import { AppDispatch } from "../../redux/store";
+import Sidebar from "../molecules/Sidebar";
+import "../../styles/EditUser.css";
 
 const EditUser = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const location = useLocation();
   const navigate = useNavigate();
+    const [clicked, setClicked] = useState(false);
   const { id, name, email } = location.state;
 
   const nameRef = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
-    const [message, setMessage] = useState('');
-    const [error, setError] = useState('');
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (nameRef.current) nameRef.current.value = name;
     if (emailRef.current) emailRef.current.value = email;
   }, [name, email]);
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   const handleUpdate = async () => {
     const updatedName = nameRef.current?.value;
     const updatedEmail = emailRef.current?.value;
 
     if (updatedName && updatedEmail) {
-      try {
-        await axios.put(`https://685b7af589952852c2d9ab22.mockapi.io/api/users/${id}`, {
-          name: updatedName,
-          email: updatedEmail
-        });
-        setMessage('User updated successfully!');
-        setTimeout(()=>navigate('/users'), 1000);
-      } catch (error) {
-        console.error('Error updating user:', error);
-        setError('error in updating user');
+      if (!emailRegex.test(updatedEmail)) {
+        setError('Invalid email.');
         setMessage('');
+        return;
       }
+      setClicked(true);
+      try {
+        await dispatch(
+          updateUser({ id, name: updatedName, email: updatedEmail })
+        );
+        setMessage("User updated successfully!");
+        setError(' ')
+        setTimeout(() => navigate("/users"), 1500);
+      } catch (err) {
+        console.error("Error updating user:", err);
+        setError("Error updating user.");
+      }
+    } else {
+      setError("Both fields are required.");
+      setMessage("");
     }
   };
 
@@ -44,12 +58,20 @@ const EditUser = () => {
     <div>
       <Sidebar />
       <h2>Edit User</h2>
-      <input ref={nameRef} placeholder="Name" />
-      <input ref={emailRef} placeholder="Email" />
-      <button onClick={handleUpdate}>Update</button>
+      <div className="edituser">
+        <input ref={nameRef} placeholder="Name" />
+        <input ref={emailRef} placeholder="Email" />
+        <button onClick={handleUpdate} disabled={clicked}>
+          {clicked ? (
+            <img src={Spinnersvg} alt="Updating..." width={40} height={40}/>
+          ) : (
+            "Update"
+          )}
+        </button>
 
-      {message && <p className="success-message">{message}</p>}
-      {error && <p className="error-message">{error}</p>}
+        {message && <p className="success-message">{message}</p>}
+        {error && <p className="error-message">{error}</p>}
+      </div>
     </div>
   );
 };

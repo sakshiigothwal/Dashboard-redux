@@ -1,41 +1,29 @@
-import axios from 'axios';
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
-import Button from '../atoms/Button';
-import Sidebar from '../molecules/Sidebar';
+import { fetchUsers, deleteUser, UserProps } from "../../redux/slice/userSlice";
+import { AppDispatch, RootState } from "../../redux/store";
+import Button from "../atoms/Button";
+import Sidebar from "../molecules/Sidebar";
+import "../../styles/User.css";
 
-import '../../styles/User.css';
-
-type UserProps ={
-  key: number
-  id: number
-  name: string
-  email: string
-}
 
 const User = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const [users, setUsers] = useState<UserProps[]>([]);
 
-  const fetchUsers = () => {
-    axios.get('https://685b7af589952852c2d9ab22.mockapi.io/api/users')
-      .then((res) => setUsers(res.data))
-      .catch((err) => console.error(err));
-  };
+  const { users, loading, error } = useSelector(
+    (state: RootState) => state.user
+  );
 
   useEffect(() => {
     //fetch users from API
-    fetchUsers()
+    fetchUsers();
   }, []);
 
-  const handleDelete = async (id: string) => {
-    try {
-      await axios.delete(`${'https://685b7af589952852c2d9ab22.mockapi.io/api/users'}/${id}`);
-      fetchUsers(); // refresh list
-    } catch (error) {
-      console.error('Error deleting user:', error);
-    }
+  const handleDelete = (id: string) => {
+    dispatch(deleteUser(id));
   };
 
   const handleEdit = (user: UserProps) => {
@@ -43,14 +31,18 @@ const User = () => {
   };
 
   return (
-    <div className='user'>
+    <div className="user">
       <Sidebar />
       <h2>User List</h2>
-      <div className='adduser'>
-        <Button label="Add User" onClick={() => navigate('/add-user')} />
+      <div className="adduserbtn">
+        <Button label="Add User" onClick={() => navigate("/add-user")} />
       </div>
       {/* if user exist then display it in the talbe */}
-      {users.length > 0 ? (
+      {loading ? (
+        <p>Loading...</p>
+      ) : error ? (
+        <p>Error: {error}</p>
+      ) : users.length > 0 ? (
         <table className="table">
           <thead>
             <tr>
@@ -67,12 +59,14 @@ const User = () => {
                 <td>{index + 1}</td>
                 <td>{props.name}</td>
                 <td>{props.email}</td>
-                <td className='buttons'>
+                <td className="buttons">
                   <Button label="Edit" onClick={() => handleEdit(props)} />
-                  <Button label="Delete" onClick={() => handleDelete(props.id.toString())} />
+                  <Button
+                    label="Delete"
+                    onClick={() => handleDelete(props.id.toString())}
+                  />
                 </td>
               </tr>
-              
             ))}
           </tbody>
         </table>

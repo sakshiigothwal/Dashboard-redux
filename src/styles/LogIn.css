@@ -3,7 +3,7 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: linear-gradient(to right, #17153B, #2E236C); 
+  background: linear-gradient(to right, #17153b, #2e236c);
   padding: 20px;
 }
 
@@ -37,14 +37,14 @@
 }
 
 .loginbox input:focus {
-  border-color: #2E236C;
+  border-color: #2e236c;
   outline: none;
 }
 
 .loginbox button {
   width: 100%;
   padding: 12px;
-  background-color: #2E236C;
+  background-color: #2e236c;
   color: white;
   border: none;
   border-radius: 6px;
@@ -54,7 +54,7 @@
 }
 
 .loginbox button:hover {
-  background-color: #4134A0;
+  background-color: #4134a0;
 }
 
 .error {
@@ -67,4 +67,15 @@
   margin: 20px 0 10px;
   font-weight: 500;
   color: #666;
+}
+.success {
+  color: green;
+  margin-top: 10px;
+  text-align: center;
+}
+
+.info {
+  color: red;
+  margin-top: 10px;
+  text-align: center;
 }
