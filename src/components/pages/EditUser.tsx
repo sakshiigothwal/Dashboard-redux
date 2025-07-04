@@ -2,17 +2,18 @@ import React, { useRef, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 
-import Spinnersvg from '../../images/spinner.svg';
 import { updateUser } from "../../redux/slice/userSlice";
 import { AppDispatch } from "../../redux/store";
+import Spinner from "../atoms/Spinner";
 import Sidebar from "../molecules/Sidebar";
 import "../../styles/EditUser.css";
+import "../../styles/Spinner.css";
 
 const EditUser = () => {
   const dispatch = useDispatch<AppDispatch>();
   const location = useLocation();
   const navigate = useNavigate();
-    const [clicked, setClicked] = useState(false);
+  const [clicked, setClicked] = useState(false);
   const { id, name, email } = location.state;
 
   const nameRef = useRef<HTMLInputElement>(null);
@@ -24,7 +25,7 @@ const EditUser = () => {
     if (nameRef.current) nameRef.current.value = name;
     if (emailRef.current) emailRef.current.value = email;
   }, [name, email]);
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   const handleUpdate = async () => {
     const updatedName = nameRef.current?.value;
@@ -32,21 +33,22 @@ const EditUser = () => {
 
     if (updatedName && updatedEmail) {
       if (!emailRegex.test(updatedEmail)) {
-        setError('Invalid email.');
-        setMessage('');
+        setError("Invalid email.");
+        setMessage("");
         return;
       }
       setClicked(true);
       try {
         await dispatch(
           updateUser({ id, name: updatedName, email: updatedEmail })
-        );
+        ).unwrap();
         setMessage("User updated successfully!");
-        setError(' ')
+        setError(" ");
         setTimeout(() => navigate("/users"), 1500);
       } catch (err) {
         console.error("Error updating user:", err);
         setError("Error updating user.");
+        setClicked(false);
       }
     } else {
       setError("Both fields are required.");
@@ -58,20 +60,18 @@ const EditUser = () => {
     <div>
       <Sidebar />
       <h2>Edit User</h2>
-      <div className="edituser">
-        <input ref={nameRef} placeholder="Name" />
-        <input ref={emailRef} placeholder="Email" />
-        <button onClick={handleUpdate} disabled={clicked}>
-          {clicked ? (
-            <img src={Spinnersvg} alt="Updating..." width={40} height={40}/>
-          ) : (
-            "Update"
-          )}
-        </button>
+      <form onSubmit={handleUpdate}>
+        <div className="edituser">
+          <input ref={nameRef} placeholder="Name" />
+          <input ref={emailRef} placeholder="Email" />
+          <button onClick={handleUpdate} type="submit" disabled={clicked}>
+            {clicked ? <Spinner /> : "Update"}
+          </button>
 
-        {message && <p className="success-message">{message}</p>}
-        {error && <p className="error-message">{error}</p>}
-      </div>
+          {message && <p className="success-message">{message}</p>}
+          {error && <p className="error-message">{error}</p>}
+        </div>
+      </form>
     </div>
   );
 };

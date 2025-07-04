@@ -14,12 +14,14 @@ type UserState = {
   users: UserProps[];
   loading: boolean;
   error: string | null;
+  deletingId: string | null;
 };
 
 const initialState: UserState = {
   users: [],
   loading: false,
   error: null,
+  deletingId: null,
 };
 
 // Thunks
@@ -31,18 +33,24 @@ export const fetchUsers = createAsyncThunk("user/fetchUsers", async () => {
 export const addUser = createAsyncThunk(
   "user/addUser",
   async (user: { name: string; email: string }) => {
-    const response = await axios.post('https://685b7af589952852c2d9ab22.mockapi.io/api/users', user);
+    const response = await axios.post(
+      "https://685b7af589952852c2d9ab22.mockapi.io/api/users",
+      user
+    );
     return response.data;
   }
 );
 
 export const updateUser = createAsyncThunk(
-  'user/updateUser',
+  "user/updateUser",
   async ({ id, name, email }: { id: string; name: string; email: string }) => {
-    const response = await axios.put(`https://685b7af589952852c2d9ab22.mockapi.io/api/users/${id}`, {
-      name,
-      email,
-    });
+    const response = await axios.put(
+      `https://685b7af589952852c2d9ab22.mockapi.io/api/users/${id}`,
+      {
+        name,
+        email,
+      }
+    );
     return response.data;
   }
 );
@@ -90,8 +98,16 @@ const userSlice = createSlice({
       })
 
       ///delete
+      .addCase(deleteUser.pending, (state, action) => {
+        state.deletingId = action.meta.arg;
+      })
       .addCase(deleteUser.fulfilled, (state, action) => {
         state.users = state.users.filter((u) => u.id !== action.payload);
+        state.deletingId = null;
+      })
+      .addCase(deleteUser.rejected, (state, action) => {
+        state.error = action.error.message || "Delete failed";
+        state.deletingId = null;
       });
   },
 });

@@ -2,11 +2,12 @@ import React, { useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import Spinnersvg from '../../images/spinner.svg';
 import { addUser } from "../../redux/slice/userSlice";
 import { AppDispatch } from "../../redux/store";
+import Spinner from '../atoms/Spinner';
 import Sidebar from "../molecules/Sidebar";
 import "../../styles/AddUsers.css";
+import '../../styles/Spinner.css';
 
 const AddUser = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -32,13 +33,14 @@ const AddUser = () => {
     }
     setClicked(true);
       try {
-        await dispatch(addUser({ name, email }));
+        await dispatch(addUser({ name, email })).unwrap();
         setMessage("User added successfully!");
         setError(' ')
         setTimeout(() => navigate("/users"), 1500);
       } catch (err) {
         console.error("thunk error:", err);
         setError("Error adding user.");
+        setClicked(false);
       }
     } else {
       setError("Both fields are required.");
@@ -49,20 +51,18 @@ const AddUser = () => {
     <div>
       <Sidebar />
       <h2>Add User</h2>
+      <form onSubmit={handleAdd}>
       <div className="adduser">
         <input ref={nameRef} placeholder="Name" />
         <input ref={emailRef} placeholder="Email" />
-         <button onClick={handleAdd} disabled={clicked}>
-          {clicked ? (
-            <img src={Spinnersvg} alt="Adding..." width={40} height={40}/>
-          ) : (
-            "Add"
-          )}
-        </button>
+        <button onClick={handleAdd} type="submit" disabled={clicked}>
+            {clicked ? <Spinner /> : 'Add'}
+          </button>
 
         {message && <p className="success-message">{message}</p>}
         {error && <p className="error-message">{error}</p>}
       </div>
+      </form>
     </div>
   );
 };

@@ -84,7 +84,7 @@ const RegisterForm = () => {
       const user = result.user;
 
       const userExists = users.some(
-        (u: RegisterProps) => u.email === user.email,
+        (u: RegisterProps) => u.email.toLowerCase() === (user.email || '').toLowerCase(),
       );
 
       if (!userExists) {
@@ -128,6 +128,7 @@ const RegisterForm = () => {
       dispatch(registerUser(newUser));
       setSuccess('Registered successful!');
       setTimeout(()=>navigate('/login'), 1500);
+      setTimeout(() => setSuccess(''), 3000); 
 
     }
   };

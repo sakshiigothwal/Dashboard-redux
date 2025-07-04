@@ -2,25 +2,25 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
+import Spinnersvg from "../../images/spinner.svg";
 import { fetchUsers, deleteUser, UserProps } from "../../redux/slice/userSlice";
 import { AppDispatch, RootState } from "../../redux/store";
 import Button from "../atoms/Button";
+import Spinner from "../atoms/Spinner";
 import Sidebar from "../molecules/Sidebar";
 import "../../styles/User.css";
-
 
 const User = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
-  const { users, loading, error } = useSelector(
+  const { users, loading, error, deletingId } = useSelector(
     (state: RootState) => state.user
   );
 
   useEffect(() => {
-    //fetch users from API
-    fetchUsers();
-  }, []);
+    dispatch(fetchUsers()); //fetch user from API
+  }, [dispatch]);
 
   const handleDelete = (id: string) => {
     dispatch(deleteUser(id));
@@ -39,7 +39,9 @@ const User = () => {
       </div>
       {/* if user exist then display it in the talbe */}
       {loading ? (
-        <p>Loading...</p>
+        <div className="spinner-container">
+          <img src={Spinnersvg} alt="Loading..." className="spinner" />
+        </div>
       ) : error ? (
         <p>Error: {error}</p>
       ) : users.length > 0 ? (
@@ -62,8 +64,9 @@ const User = () => {
                 <td className="buttons">
                   <Button label="Edit" onClick={() => handleEdit(props)} />
                   <Button
-                    label="Delete"
-                    onClick={() => handleDelete(props.id.toString())}
+                    label={deletingId === props.id ? <Spinner /> : "Delete"}
+                    onClick={() => handleDelete(props.id)}
+                    disabled={deletingId === props.id}
                   />
                 </td>
               </tr>

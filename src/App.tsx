@@ -34,7 +34,7 @@ function App() {
         <Header />
         <div className='main'>
         <Routes>
-          <Route path="/" element={<HomePage />} />
+          <Route path="/" element={isLoggedIn ? <HomePage /> : <LogInPage />} />
           <Route path="/login" element={<LogInPage />} />
           <Route path="/register" element={<Register />} />
           {/* only accessible if logged in */}
