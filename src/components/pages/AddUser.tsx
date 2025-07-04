@@ -19,9 +19,16 @@ const AddUser = () => {
   const [clicked, setClicked] = useState(false);
   const navigate = useNavigate();
 
-  const handleAdd = async () => {
+  const handleAdd = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (clicked) return;
+
+    setClicked(true);
     const name = nameRef.current?.value;
     const email = emailRef.current?.value;
+    setError('');
+    setMessage('');
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (name && email) {
@@ -29,9 +36,9 @@ const AddUser = () => {
       if (!emailRegex.test(email)) {
         setError("Invalid email.");
         setMessage("");
+        setClicked(false);
         return;
       }
-      setClicked(true);
       try {
         await dispatch(addUser({ name, email })).unwrap();
         setMessage("User added successfully!");
@@ -40,11 +47,13 @@ const AddUser = () => {
       } catch (err) {
         console.error("thunk error:", err);
         setError("Error adding user.");
+        setMessage('');
         setClicked(false);
       }
     } else {
       setError("Both fields are required.");
       setMessage("");
+      setClicked(false);
     }
   };
   return (
@@ -55,7 +64,7 @@ const AddUser = () => {
         <div className="adduser">
           <input ref={nameRef} placeholder="Name" />
           <input ref={emailRef} placeholder="Email" />
-          <button onClick={handleAdd} type="submit" disabled={clicked}>
+          <button type="submit" disabled={clicked}>
             {clicked ? <Spinner /> : "Add"}
           </button>
 

@@ -14,20 +14,25 @@ const EditUser = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [clicked, setClicked] = useState(false);
-  const { id, name, email } = location.state;
+  const userState = location.state;
+  const { id } = userState || {};
 
   const nameRef = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
-
   useEffect(() => {
-    if (nameRef.current) nameRef.current.value = name;
-    if (emailRef.current) emailRef.current.value = email;
-  }, [name, email]);
+    if (userState?.name && nameRef.current) {
+      nameRef.current.value = userState.name;
+    }
+    if (userState?.email && emailRef.current) {
+      emailRef.current.value = userState.email;
+    }
+  }, [userState]);
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  const handleUpdate = async () => {
+  const handleUpdate = async (e: React.FormEvent) => {
+    e.preventDefault()
     const updatedName = nameRef.current?.value;
     const updatedEmail = emailRef.current?.value;
 
