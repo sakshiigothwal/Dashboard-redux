@@ -1,12 +1,12 @@
-import React from 'react'
-import Sidebar from '../molecules/Sidebar'
+import React from "react";
+import Sidebar from "../organism/Sidebar";
 
 const UserDetails = () => {
   return (
     <div>
-      <Sidebar/>
+      <Sidebar />
     </div>
-  )
-}
+  );
+};
 
-export default UserDetails
+export default UserDetails;

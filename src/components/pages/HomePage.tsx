@@ -1,12 +1,12 @@
-import React from 'react';
+import React from "react";
 
-import '../../styles/HomePage.css';
-import Button from '../atoms/Button';
-import Cards from '../molecules/Cards';
-import Sidebar from '../molecules/Sidebar';
+import "../../styles/HomePage.css";
+import Button from "../atoms/Button";
+import Cards from "../molecules/Cards";
+import Sidebar from "../organism/Sidebar";
 
 const HomePage: React.FC = () => {
-  const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true'; //checks login status
+  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true"; //checks login status
 
   const totalUsers = 34;
   const totalBlogs = 27;
@@ -25,11 +25,11 @@ const HomePage: React.FC = () => {
           <div className="actions">
             <Button
               label="View All Users"
-              onClick={() => (window.location.href = '/users')}
+              onClick={() => (window.location.href = "/users")}
             />
             <Button
               label="View All Blogs"
-              onClick={() => (window.location.href = '/blogs')}
+              onClick={() => (window.location.href = "/blogs")}
             />
           </div>
         </div>

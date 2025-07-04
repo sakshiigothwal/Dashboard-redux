@@ -5,7 +5,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { updateUser } from "../../redux/slice/userSlice";
 import { AppDispatch } from "../../redux/store";
 import Spinner from "../atoms/Spinner";
-import Sidebar from "../molecules/Sidebar";
+import Sidebar from "../organism/Sidebar";
 import "../../styles/EditUser.css";
 import "../../styles/Spinner.css";
 

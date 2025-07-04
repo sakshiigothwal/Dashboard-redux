@@ -4,10 +4,10 @@ import { useNavigate } from "react-router-dom";
 
 import { addUser } from "../../redux/slice/userSlice";
 import { AppDispatch } from "../../redux/store";
-import Spinner from '../atoms/Spinner';
-import Sidebar from "../molecules/Sidebar";
+import Spinner from "../atoms/Spinner";
+import Sidebar from "../organism/Sidebar";
 import "../../styles/AddUsers.css";
-import '../../styles/Spinner.css';
+import "../../styles/Spinner.css";
 
 const AddUser = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -27,15 +27,15 @@ const AddUser = () => {
     if (name && email) {
       //if both the value is there
       if (!emailRegex.test(email)) {
-      setError('Invalid email.');
-      setMessage('');
-      return;
-    }
-    setClicked(true);
+        setError("Invalid email.");
+        setMessage("");
+        return;
+      }
+      setClicked(true);
       try {
         await dispatch(addUser({ name, email })).unwrap();
         setMessage("User added successfully!");
-        setError(' ')
+        setError(" ");
         setTimeout(() => navigate("/users"), 1500);
       } catch (err) {
         console.error("thunk error:", err);
@@ -52,16 +52,16 @@ const AddUser = () => {
       <Sidebar />
       <h2>Add User</h2>
       <form onSubmit={handleAdd}>
-      <div className="adduser">
-        <input ref={nameRef} placeholder="Name" />
-        <input ref={emailRef} placeholder="Email" />
-        <button onClick={handleAdd} type="submit" disabled={clicked}>
-            {clicked ? <Spinner /> : 'Add'}
+        <div className="adduser">
+          <input ref={nameRef} placeholder="Name" />
+          <input ref={emailRef} placeholder="Email" />
+          <button onClick={handleAdd} type="submit" disabled={clicked}>
+            {clicked ? <Spinner /> : "Add"}
           </button>
 
-        {message && <p className="success-message">{message}</p>}
-        {error && <p className="error-message">{error}</p>}
-      </div>
+          {message && <p className="success-message">{message}</p>}
+          {error && <p className="error-message">{error}</p>}
+        </div>
       </form>
     </div>
   );

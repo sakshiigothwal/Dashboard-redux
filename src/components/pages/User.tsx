@@ -7,7 +7,7 @@ import { fetchUsers, deleteUser, UserProps } from "../../redux/slice/userSlice";
 import { AppDispatch, RootState } from "../../redux/store";
 import Button from "../atoms/Button";
 import Spinner from "../atoms/Spinner";
-import Sidebar from "../molecules/Sidebar";
+import Sidebar from "../organism/Sidebar";
 import "../../styles/User.css";
 
 const User = () => {
