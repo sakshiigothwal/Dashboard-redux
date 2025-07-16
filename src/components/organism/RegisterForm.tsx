@@ -1,14 +1,14 @@
-import { signInWithPopup } from 'firebase/auth';
-import React, { useState, FormEvent } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { signInWithPopup } from "firebase/auth";
+import React, { useState, FormEvent } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
-import { auth, provider } from '../../firebase';
-import { registerUser } from '../../redux/slice/authSlice';
-import { RootState } from '../../redux/store';
-import Button from '../atoms/Button';
-import Form from '../molecules/Form';
-import '../../styles/RegisterForm.css';
+import { auth, provider } from "../../firebase";
+import { registerUser } from "../../redux/slice/authSlice";
+import { RootState } from "../../redux/store";
+import Button from "../atoms/Button";
+import Form from "../molecules/Form";
+import "../../styles/RegisterForm.css";
 
 type RegisterProps = {
   email: string;
@@ -20,70 +20,79 @@ const RegisterForm = () => {
 
   const navigate = useNavigate();
   const [data, setData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
   });
 
   const [error, setError] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
+    name: "",
+    email: "",
+    password: [] as string[],
+    confirmPassword: "",
   });
 
-  const [success, setSuccess] = useState('');
+  const [success, setSuccess] = useState("");
 
   // handle input change and clear related error message
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setData((prev) => ({ ...prev, [name]: value }));
-    setError((prev) => ({ ...prev, [name]: '' }));
+    setError((prev) => ({ ...prev, [name]: "" }));
   };
 
   // to validate
   const validate = () => {
     let isValid = true;
-    const newError = { name: '', email: '', password: '', confirmPassword: '' };
+    const newError = {
+      name: "",
+      email: "",
+      password: [] as string[],
+      confirmPassword: "",
+    };
 
     if (!data.name) {
-      newError.name = 'Name is required';
+      newError.name = "Name is required";
       isValid = false;
     }
 
     if (!data.email) {
-      newError.email = 'Email is required';
+      newError.email = "Email is required";
       isValid = false;
     } else if (!/\S+@\S+\.\S+/.test(data.email)) {
-      newError.email = 'Invalid email';
+      newError.email = "Invalid email";
       isValid = false;
     }
 
     if (!data.password) {
-    newError.password = 'Password is required';
-    isValid = false;
-  } else {
-    if (data.password.length < 8) {
-      newError.password = 'Password must be at least 8 characters';
+      newError.password.push("Password is required");
       isValid = false;
-    } else if (!/[A-Z]/.test(data.password)) {
-      newError.password = 'Must contain at least one uppercase letter';
-      isValid = false;
-    } else if (!/[a-z]/.test(data.password)) {
-      newError.password = 'Must contain at least one lowercase letter';
-      isValid = false;
-    } else if (!/\d/.test(data.password)) {
-      newError.password = 'Must contain at least one digit';
-      isValid = false;
-    } else if (!/[!@#$%^&*(),.?":{}|<>]/.test(data.password)) {
-      newError.password = 'Must contain at least one special character';
-      isValid = false;
+    } else {
+      if (data.password.length < 8) {
+        newError.password.push("Must be at least 8 characters");
+        isValid = false;
+      }
+      if (!/[A-Z]/.test(data.password)) {
+        newError.password.push("Must contain at least one uppercase letter");
+        isValid = false;
+      }
+      if (!/[a-z]/.test(data.password)) {
+        newError.password.push("Must contain at least one lowercase letter");
+        isValid = false;
+      }
+      if (!/\d/.test(data.password)) {
+        newError.password.push("Must contain at least one digit");
+        isValid = false;
+      }
+      if (!/[!@#$%^&*(),.?":{}|<>]/.test(data.password)) {
+        newError.password.push("Must contain at least one special character");
+        isValid = false;
+      }
     }
-  }
 
     if (data.confirmPassword !== data.password) {
-      newError.confirmPassword = 'Passwords do not match';
+      newError.confirmPassword = "Passwords do not match";
       isValid = false;
     }
 
@@ -98,22 +107,23 @@ const RegisterForm = () => {
       const user = result.user;
 
       const userExists = users.some(
-        (u: RegisterProps) => u.email.toLowerCase() === (user.email || '').toLowerCase(),
+        (u: RegisterProps) =>
+          u.email.toLowerCase() === (user.email || "").toLowerCase()
       );
 
       if (!userExists) {
         dispatch(
           registerUser({
-            name: user.displayName || '',
-            email: user.email || '',
-            password: '',
-          }),
+            name: user.displayName || "",
+            email: user.email || "",
+            password: "",
+          })
         );
       }
 
-      navigate('/login');
+      navigate("/login");
     } catch (error) {
-      console.error('Google sign-in error:', error);
+      console.error("Google sign-in error:", error);
     }
   };
 
@@ -128,7 +138,7 @@ const RegisterForm = () => {
       if (userExists) {
         setError((prev) => ({
           ...prev,
-          email: 'Email is already registered',
+          email: "Email is already registered",
         }));
         return;
       }
@@ -140,10 +150,9 @@ const RegisterForm = () => {
         password: data.password,
       };
       dispatch(registerUser(newUser));
-      setSuccess('Registered successful!');
-      setTimeout(()=>navigate('/login'), 1500);
-      setTimeout(() => setSuccess(''), 3000); 
-
+      setSuccess("Registered successful!");
+      setTimeout(() => navigate("/login"), 1500);
+      setTimeout(() => setSuccess(""), 3000);
     }
   };
 
@@ -181,8 +190,17 @@ const RegisterForm = () => {
             value={data.password}
             onChange={handleChange}
             onFocus={() => {}}
-            error={error.password}
+            error={""}
           />
+          {error.password.length > 0 && (
+            <div className="error">
+              {error.password.map((msg, idx) => (
+                <p key={idx} className="error">
+                  {msg}
+                </p>
+              ))}
+            </div>
+          )}
 
           <Form
             label="Confirm Password :"
